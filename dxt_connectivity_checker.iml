@@ -8,5 +8,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="sshj-0.24.0" level="project" />
+    <orderEntry type="library" name="sshd-core-1.7.0" level="project" />
+    <orderEntry type="library" name="mina-core-2.0.17" level="project" />
+    <orderEntry type="library" name="sshd" level="project" />
   </component>
 </module>
