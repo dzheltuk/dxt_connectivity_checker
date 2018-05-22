@@ -19,6 +19,7 @@ import util.StreamPrinter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class SshdShell {
@@ -59,20 +60,14 @@ public class SshdShell {
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             channel.setOut(new NoCloseOutputStream(out));
             channel.setErr(new NoCloseOutputStream(out));
+
+            channel.setUsePty(true);
+            channel.setPtyType("vt102");
             channel.open();
-            //channel.waitFor(ClientChannel.CLOSED, 0);
 
-            String[] lines=new String(out.toByteArray()).split("\r\n");
-            StringBuffer result=new StringBuffer();
-            for(int i=21;i<lines.length-1;i++) {
-                result.append(lines[i]).append("\n");
-            }
+            System.out.println("Lines : " + Arrays.toString(out.toByteArray()));
 
-            // visual output of Fuse/Karaf interactions
-            if (!"".equals(result.toString().trim()))
-                System.out.println("out >> "+result.toString().trim());
-//        System.out.println("out >> "+result.toString().trim());
-            return result.toString();
+            return "";
         }
     }
 

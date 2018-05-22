@@ -12,7 +12,7 @@ public class Main {
     private static final String COMMAND_EXIT = "ZZZ;\n\r";
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        testSshj();
+        //testSshj();
         testSshd();
     }
     private static void testSshd() throws InterruptedException, IOException {
