@@ -15,9 +15,7 @@ import util.StreamPrinter;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.EnumSet;
 import java.util.concurrent.TimeUnit;
-import java.util.jar.Attributes;
 
 public class SshdShell {
     private static final long CONNECT_TIMEOUT = TimeUnit.SECONDS.toMillis(5L);
@@ -25,7 +23,7 @@ public class SshdShell {
 
     private SshClient client;
     private SimpleClient simple;
-    private StreamPrinter reader;
+    private static StreamPrinter reader;
 
     public void init() {
         client = setupTestClient(getClass());
@@ -53,8 +51,8 @@ public class SshdShell {
             ChannelShell shell = session.createShellChannel();
             shell.setPtyType("vt102");
 
-            //shell.setIn(new ByteArrayInputStream(new byte[0]));
-            //shell.setAgentForwarding(true);
+            shell.setIn(new ByteArrayInputStream(new byte[0]));
+            shell.setAgentForwarding(true);
 
             if (reader == null) {
                 reader = new StreamPrinter(shell.getIn());
