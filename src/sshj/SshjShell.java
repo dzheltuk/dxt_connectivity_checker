@@ -4,14 +4,10 @@ import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.connection.channel.direct.PTYMode;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
+import util.StreamPrinter;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class SshjShell {
@@ -63,54 +59,5 @@ public class SshjShell {
 
         }
         reader.close();
-    }
-
-    private static class StreamPrinter extends Thread {
-        InputStream is;
-        List<Character> chars = new ArrayList<>();
-        boolean isProcessing = false;
-
-        private StreamPrinter(InputStream is) {
-            this.is = is;
-        }
-
-        public void close() {
-            try {
-                is.close();
-            } catch (Exception e) {
-
-            }
-        }
-
-        public String getText() {
-            char[] charsResult = new char[chars.size()];
-            int i = 0;
-            for (Character ch : chars) {
-                charsResult[i++] = ch;
-            }
-            return new String(charsResult);
-        }
-
-        @Override
-        public void run() {
-            try {
-                InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader br = new BufferedReader(isr);
-                int line = -2;
-                while ((line = br.read()) != -2) {
-                    isProcessing = true;
-                    chars.add((char) line);
-                    if (line == -1) {
-                        System.out.print(".");
-                        isProcessing = false;
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                }
-            } catch (IOException ioe) {
-            }
-        }
     }
 }

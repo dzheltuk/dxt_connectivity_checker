@@ -20,12 +20,12 @@ public class Main {
         System.out.println("sshd executing...");
         try {
             sshdShell.init();
-            sshdShell.executeTelnetCommand(HOST_NAME, USERNAME, PASSWORD, COMMAND);
+            System.out.println(sshdShell.executeTelnetCommand(HOST_NAME, USERNAME, PASSWORD, COMMAND));
         } catch (Exception e) {
             System.out.println("Unable to execute " + e.getMessage());
         } finally {
             Thread.sleep(100);
-            sshdShell.executeTelnetCommand(HOST_NAME, USERNAME, PASSWORD, COMMAND_EXIT);
+            System.out.println(sshdShell.executeTelnetCommand(HOST_NAME, USERNAME, PASSWORD, COMMAND_EXIT));
             try {
                 sshdShell.close();
             } catch (Exception e) {
