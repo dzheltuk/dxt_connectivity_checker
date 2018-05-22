@@ -55,6 +55,8 @@ public class SshdShell {
 
             channel.setIn(new ByteArrayInputStream(new byte[0]));
             channel.setAgentForwarding(true);
+
+            session.executeRemoteCommand(command);
         }
     }
 
