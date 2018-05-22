@@ -20,12 +20,12 @@ public class Main {
         System.out.println("sshd executing...");
         try {
             sshdShell.init();
-            System.out.println(sshdShell.executeCommand(HOST_NAME, USERNAME, PASSWORD, COMMAND));
+            System.out.println(sshdShell.executeCommand2(HOST_NAME, USERNAME, PASSWORD, COMMAND));
         } catch (Exception e) {
             System.out.println("Unable to execute " + e.getMessage());
         } finally {
-            Thread.sleep(100);
-            System.out.println(sshdShell.executeCommand(HOST_NAME, USERNAME, PASSWORD, COMMAND_EXIT));
+            //Thread.sleep(100);
+            //System.out.println(sshdShell.executeCommand(HOST_NAME, USERNAME, PASSWORD, COMMAND_EXIT));
             try {
                 sshdShell.close();
             } catch (Exception e) {

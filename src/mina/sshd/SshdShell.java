@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 public class SshdShell {
@@ -54,20 +55,40 @@ public class SshdShell {
         try (ClientSession session = simple.sessionLogin(host, 22, username, password)) {
             System.out.println("Session is : " + session.isAuthenticated());
 
-            ChannelShell channel = session.createShellChannel();
+            ChannelExec channel = session.createExecChannel("ls");
 
             channel.setIn(new NoCloseInputStream(new ByteArrayInputStream(command.getBytes())));
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             channel.setOut(new NoCloseOutputStream(out));
-            channel.setErr(new NoCloseOutputStream(out));
+            channel.setErr(new NoCloseOutputStream(System.err));
 
             channel.setUsePty(true);
             channel.setPtyType("vt102");
             channel.open();
 
-            System.out.println("Lines : " + Arrays.toString(out.toByteArray()));
+            session.executeRemoteCommand(command);
 
-            return "";
+            return String.valueOf(out);
+        }
+    }
+
+    public  String executeCommand2(final String host, final String username, final String password,
+                                  final String command) throws IOException {
+
+        client.start();
+
+        try (ClientSession session = simple.sessionLogin(host, 22, username, password)) {
+            System.out.println("Session is : " + session.isAuthenticated());
+
+            ClientChannel channel = session.createShellChannel();
+            channel.setIn(new NoCloseInputStream(new ByteArrayInputStream(command.getBytes())));
+            ByteArrayOutputStream out=new ByteArrayOutputStream();
+            channel.setOut(new NoCloseOutputStream(out));
+            channel.setErr(new NoCloseOutputStream(out));
+            channel.open();
+            channel.waitFor(Collections.singleton(ClientChannelEvent.CLOSED), 10000);
+
+            return new String(out.toByteArray());
         }
     }
 
@@ -82,36 +103,21 @@ public class SshdShell {
             shell.setUsePty(true);
             shell.setPtyType("vt102");
 
-            shell.setIn(new ByteArrayInputStream(new byte[0]));
+            shell.setIn(new NoCloseInputStream(new ByteArrayInputStream(command.getBytes())));
+            shell.setOut(new NoCloseOutputStream(System.out));
             shell.setAgentForwarding(true);
 
             if (reader == null) {
                 reader = new StreamPrinter(shell.getIn());
                 reader.start();
             }
-            shell.getOut().write((command).getBytes());
-            shell.getOut().flush();
+            //session.executeRemoteCommand("ls");
+//            shell.getOut().write((command).getBytes());
+//            shell.getOut().flush();
+            session.executeRemoteCommand("ls");
             while (reader.isProcessing) {
                 Thread.sleep(1000);
             }
-
-
-//            try (Terminal terminal = TerminalBuilder.terminal()) {
-//                Attributes attributes = terminal.enterRawMode();
-//
-//                channel.setOut(terminal.output());
-//                channel.setErr(terminal.output());
-//                channel.open().verify();
-//                if (channel instanceof PtyCapableChannelSession) {
-//                    //registerSignalHandler(terminal, (PtyCapableChannelSession) channel);
-//                }
-//                channel.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), 0);
-//                if (channel.getExitStatus() != null) {
-//                    //exitStatus = channel.getExitStatus();
-//                }
-//            } finally {
-//                terminal.setAttributes(attributes);
-//            }
         }
 
         return reader.getText();
