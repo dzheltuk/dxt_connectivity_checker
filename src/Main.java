@@ -12,7 +12,7 @@ public class Main {
     private static final String COMMAND_EXIT = "ZZZ;\n\r";
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        //testSshj();
+        testSshj();
         testSshd();
     }
     private static void testSshd() throws InterruptedException, IOException {
@@ -20,22 +20,24 @@ public class Main {
         System.out.println("sshd executing...");
         try {
             sshdShell.init();
-            System.out.println(sshdShell.executeCommand2(HOST_NAME, USERNAME, PASSWORD, COMMAND));
+            System.out.println(sshdShell.executeCommand(HOST_NAME, USERNAME, PASSWORD, COMMAND));
         } catch (Exception e) {
             System.out.println("Unable to execute " + e.getMessage());
         } finally {
-            //Thread.sleep(100);
-            //System.out.println(sshdShell.executeCommand(HOST_NAME, USERNAME, PASSWORD, COMMAND_EXIT));
+            Thread.sleep(100);
+            System.out.println(sshdShell.executeCommand(HOST_NAME, USERNAME, PASSWORD, COMMAND_EXIT));
             try {
                 sshdShell.close();
             } catch (Exception e) {
                 System.out.println("Unable to close sshd channel " + e.getMessage());
             }
         }
+        System.out.println("finished");
     }
 
     private static void testSshj() throws InterruptedException, IOException {
         SshjShell sshjShell = new SshjShell();
+        System.out.println("sshj executing...");
         try {
             System.out.println(sshjShell.executeTelnetCommand(HOST_NAME, USERNAME, PASSWORD, COMMAND));
         } catch (Exception e) {
@@ -45,5 +47,6 @@ public class Main {
             System.out.println(sshjShell.executeTelnetCommand(HOST_NAME, USERNAME, PASSWORD, COMMAND_EXIT));
             sshjShell.close();
         }
+        System.out.println("finished");
     }
 }
